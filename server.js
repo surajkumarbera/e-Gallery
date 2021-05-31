@@ -7,9 +7,16 @@ const fs = require('fs')
 const IP = '127.0.0.1'
 const PORT = process.env.PORT | 3300;
 
+//checking required files
+if(!fs.existsSync('./imgs')){
+    fs.mkdirSync('./imgs')
+}
+if(!fs.existsSync('./galleryDetails.json')){
+    fs.writeFileSync('./galleryDetails.json', '[]')
+}
+
 //get the previous gallery data
-var galleryDetails = []
-galleryDetails = require('./galleryDetails.json')
+var galleryDetails = require('./galleryDetails.json')
 
 //init express
 const app = express()
