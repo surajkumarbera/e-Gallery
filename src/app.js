@@ -24,7 +24,7 @@ if (!fs.existsSync(GALLERY_DETAILS_FILE_PATH)) {
   let absolutePath = path.join(__dirname, "../"); // root directory
   dirs.forEach((dir) => {
     absolutePath = path.join(absolutePath, dir);
-    if (dir == "galleryDetails.json") {
+    if (dir == "gallery.json") {
       fs.writeFileSync(absolutePath, "[]");
     } else if (!fs.existsSync(absolutePath)) {
       fs.mkdirSync(absolutePath);
