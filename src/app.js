@@ -3,36 +3,14 @@ const expressFormidable = require("express-formidable");
 const path = require("path");
 const fs = require("fs");
 
+const { createImageStorage, createGalleryStorage } = require("./appUtils");
+const { GALLERY_PATH } = require("./constants");
 const Gallery = require("./models/Gallery");
 const Image = require("./models/Image");
-const {
-  IMAGE_STORAGE_FOLDER_PATH,
-  GALLERY_DETAILS_FILE_PATH,
-} = require("./constants");
 
 //checking required files
-if (!fs.existsSync(IMAGE_STORAGE_FOLDER_PATH)) {
-  let dirs = IMAGE_STORAGE_FOLDER_PATH.split("/");
-  let absolutePath = path.join(__dirname, "../"); // root directory
-  dirs.forEach((dir) => {
-    absolutePath = path.join(absolutePath, dir);
-    if (!fs.existsSync(absolutePath)) {
-      fs.mkdirSync(absolutePath);
-    }
-  });
-}
-if (!fs.existsSync(GALLERY_DETAILS_FILE_PATH)) {
-  let dirs = GALLERY_DETAILS_FILE_PATH.split("/");
-  let absolutePath = path.join(__dirname, "../"); // root directory
-  dirs.forEach((dir) => {
-    absolutePath = path.join(absolutePath, dir);
-    if (dir == "gallery.json") {
-      fs.writeFileSync(absolutePath, "[]");
-    } else if (!fs.existsSync(absolutePath)) {
-      fs.mkdirSync(absolutePath);
-    }
-  });
-}
+createImageStorage();
+createGalleryStorage();
 
 //init express
 const app = express();
@@ -86,7 +64,7 @@ app.post("/uploadImageAndData", (req, res) => {
     );
 
     const jsonstr = JSON.stringify(gallery);
-    fs.writeFileSync(GALLERY_DETAILS_FILE_PATH, jsonstr);
+    fs.writeFileSync(GALLERY_PATH, jsonstr);
     res.send("<h1>Image has been Submitted Successfully</h1>");
   }
 });
