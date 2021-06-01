@@ -3,12 +3,16 @@ const expressFormidable = require("express-formidable");
 const path = require("path");
 const fs = require("fs");
 
+const {
+  IMAGE_STORAGE_FOLDER_PATH,
+  GALLERY_DETAILS_FILE_PATH,
+} = require("./constants");
 //checking required files
-if (!fs.existsSync("./private/images")) {
-  fs.mkdirSync("./private/images");
+if (!fs.existsSync(IMAGE_STORAGE_FOLDER_PATH)) {
+  fs.mkdirSync(GALLERY_DETAILS_FILE_PATH);
 }
-if (!fs.existsSync("./private/data/galleryDetails.json")) {
-  fs.writeFileSync("./private/data/galleryDetails.json", "[]");
+if (!fs.existsSync(GALLERY_DETAILS_FILE_PATH)) {
+  fs.writeFileSync(GALLERY_DETAILS_FILE_PATH, "[]");
 }
 
 //get the previous gallery data
@@ -68,7 +72,7 @@ app.post("/uploadImageAndData", (req, res) => {
       submittedBy: req.fields["submittedBy"],
     });
     const jsonstr = JSON.stringify(galleryDetails);
-    fs.writeFileSync("./private/data/galleryDetails.json", jsonstr);
+    fs.writeFileSync(GALLERY_DETAILS_FILE_PATH, jsonstr);
     res.send("<h1>Your Application has been Submitted Successfully</h1>");
   }
 });
