@@ -2,6 +2,7 @@ const express = require("express");
 const expressFormidable = require("express-formidable");
 const path = require("path");
 const fs = require("fs");
+const GalleryDetail = require("./models/GalleryDetail");
 
 const {
   IMAGE_STORAGE_FOLDER_PATH,
@@ -9,30 +10,30 @@ const {
 } = require("./constants");
 //checking required files
 if (!fs.existsSync(IMAGE_STORAGE_FOLDER_PATH)) {
-  let dirs = IMAGE_STORAGE_FOLDER_PATH.split('/');
-  let absolutePath = path.join(__dirname, '../'); // root directory
+  let dirs = IMAGE_STORAGE_FOLDER_PATH.split("/");
+  let absolutePath = path.join(__dirname, "../"); // root directory
   dirs.forEach((dir) => {
     absolutePath = path.join(absolutePath, dir);
-    if(!fs.existsSync(absolutePath)){
+    if (!fs.existsSync(absolutePath)) {
       fs.mkdirSync(absolutePath);
     }
   });
 }
 if (!fs.existsSync(GALLERY_DETAILS_FILE_PATH)) {
-  let dirs = GALLERY_DETAILS_FILE_PATH.split('/');
-  let absolutePath = path.join(__dirname, '../'); // root directory
+  let dirs = GALLERY_DETAILS_FILE_PATH.split("/");
+  let absolutePath = path.join(__dirname, "../"); // root directory
   dirs.forEach((dir) => {
     absolutePath = path.join(absolutePath, dir);
-    if(dir == 'galleryDetails.json'){
+    if (dir == "galleryDetails.json") {
       fs.writeFileSync(absolutePath, "[]");
-    }else if(!fs.existsSync(absolutePath)){
-        fs.mkdirSync(absolutePath);
+    } else if (!fs.existsSync(absolutePath)) {
+      fs.mkdirSync(absolutePath);
     }
-  })
+  });
 }
 
 //get the previous gallery data
-var galleryDetails = require("../private/data/galleryDetails.json");
+var gallery = require("../private/data/gallery.json");
 
 //init express
 const app = express();
@@ -52,52 +53,44 @@ app.get("/", (req, res) => {
 });
 
 app.post("/uploadImageAndData", (req, res) => {
-  if (
-    req.fields["title"] == "" ||
-    req.fields["description"] == "" ||
-    req.fields["submittedBy"] == "" ||
-    req.files.img.name == ""
-  ) {
+  const { title, description, submittedBy } = req.fields;
+  const { img } = req.files;
+
+  if (title == "" || description == "" || submittedBy == "" || img.name == "") {
     console.log(
       `\nA bad POST request for Image Submission at ${new Date().toUTCString()}`
     );
-    
     res.send(
       "<h1>Image has not been Submitted<br>Fill All The Fields Carefully</h1>"
     );
   } else {
     console.log(
       `\nPOST request no. ${
-        galleryDetails.length + 1
+        gallery.length + 1
       } for Image Submission at ${new Date().toUTCString()}`
     );
     fs.renameSync(
-      req.files.img.path,
+      img.path,
       path.join(
         __dirname,
         "../private/images",
-        "img" +
-          String(galleryDetails.length) +
-          "." +
-          path.parse(req.files.img.name).ext
+        `img${String(gallery.length)}${path.parse(req.files.img.name).ext}`
       )
     );
-    galleryDetails.push({
-      imgID: galleryDetails.length,
-      title: req.fields["title"],
-      description: req.fields["description"],
-      submittedBy: req.fields["submittedBy"],
-    });
-    const jsonstr = JSON.stringify(galleryDetails);
+
+    gallery.push(
+      new GalleryDetail(gallery.length, title, description, submittedBy)
+    );
+
+    const jsonstr = JSON.stringify(gallery);
     fs.writeFileSync(GALLERY_DETAILS_FILE_PATH, jsonstr);
     res.send("<h1>Image has been Submitted Successfully</h1>");
   }
 });
 
-app.get('/gallery', (req, res) => {
+app.get("/gallery", (req, res) => {
   console.log(`\nGET request for Gallery Page at ${new Date().toUTCString()}`);
   res.sendFile(path.join(__dirname, "../public/gallery.html"));
-})
-
+});
 
 module.exports = app;
