@@ -9,10 +9,26 @@ const {
 } = require("./constants");
 //checking required files
 if (!fs.existsSync(IMAGE_STORAGE_FOLDER_PATH)) {
-  fs.mkdirSync(GALLERY_DETAILS_FILE_PATH);
+  let dirs = IMAGE_STORAGE_FOLDER_PATH.split('/');
+  let absolutePath = path.join(__dirname, '../'); // root directory
+  dirs.forEach((dir) => {
+    absolutePath = path.join(absolutePath, dir);
+    if(!fs.existsSync(absolutePath)){
+      fs.mkdirSync(absolutePath);
+    }
+  });
 }
 if (!fs.existsSync(GALLERY_DETAILS_FILE_PATH)) {
-  fs.writeFileSync(GALLERY_DETAILS_FILE_PATH, "[]");
+  let dirs = GALLERY_DETAILS_FILE_PATH.split('/');
+  let absolutePath = path.join(__dirname, '../'); // root directory
+  dirs.forEach((dir) => {
+    absolutePath = path.join(absolutePath, dir);
+    if(dir == 'galleryDetails.json'){
+      fs.writeFileSync(absolutePath, "[]");
+    }else if(!fs.existsSync(absolutePath)){
+        fs.mkdirSync(absolutePath);
+    }
+  })
 }
 
 //get the previous gallery data
@@ -45,6 +61,7 @@ app.post("/uploadImageAndData", (req, res) => {
     console.log(
       `\nA bad POST request for Image Submission at ${new Date().toUTCString()}`
     );
+    
     res.send(
       "<h1>Image has not been Submitted<br>Fill All The Fields Carefully</h1>"
     );
@@ -76,5 +93,11 @@ app.post("/uploadImageAndData", (req, res) => {
     res.send("<h1>Image has been Submitted Successfully</h1>");
   }
 });
+
+app.get('/gallery', (req, res) => {
+  console.log(`\nGET request for Gallery Page at ${new Date().toUTCString()}`);
+  res.sendFile(path.join(__dirname, "../public/gallery.html"));
+})
+
 
 module.exports = app;
