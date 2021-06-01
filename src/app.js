@@ -46,7 +46,7 @@ app.post("/uploadImageAndData", (req, res) => {
       `\nA bad POST request for Image Submission at ${new Date().toUTCString()}`
     );
     res.send(
-      "<h1>Your Application has not been Submitted<br>Fill All The Fields Carefully</h1>"
+      "<h1>Image has not been Submitted<br>Fill All The Fields Carefully</h1>"
     );
   } else {
     console.log(
@@ -73,7 +73,7 @@ app.post("/uploadImageAndData", (req, res) => {
     });
     const jsonstr = JSON.stringify(galleryDetails);
     fs.writeFileSync(GALLERY_DETAILS_FILE_PATH, jsonstr);
-    res.send("<h1>Your Application has been Submitted Successfully</h1>");
+    res.send("<h1>Image has been Submitted Successfully</h1>");
   }
 });
 
