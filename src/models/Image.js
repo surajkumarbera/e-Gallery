@@ -1,4 +1,4 @@
-class GalleryDetail {
+class Image {
   constructor(id, title, description, submittedBy) {
     this.id = id;
     this.title = title;
@@ -6,4 +6,4 @@ class GalleryDetail {
     this.submittedBy = submittedBy;
   }
 }
-module.exports = GalleryDetail;
+module.exports = Image;

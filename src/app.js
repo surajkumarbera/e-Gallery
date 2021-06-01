@@ -2,12 +2,14 @@ const express = require("express");
 const expressFormidable = require("express-formidable");
 const path = require("path");
 const fs = require("fs");
-const GalleryDetail = require("./models/GalleryDetail");
 
+const Gallery = require("./models/Gallery");
+const Image = require("./models/Image");
 const {
   IMAGE_STORAGE_FOLDER_PATH,
   GALLERY_DETAILS_FILE_PATH,
 } = require("./constants");
+
 //checking required files
 if (!fs.existsSync(IMAGE_STORAGE_FOLDER_PATH)) {
   let dirs = IMAGE_STORAGE_FOLDER_PATH.split("/");
@@ -32,11 +34,10 @@ if (!fs.existsSync(GALLERY_DETAILS_FILE_PATH)) {
   });
 }
 
-//get the previous gallery data
-var gallery = require("../private/data/gallery.json");
-
 //init express
 const app = express();
+const gallery = new Gallery();
+app.gallery = gallery;
 
 //add middleware
 app.use(
@@ -66,7 +67,7 @@ app.post("/uploadImageAndData", (req, res) => {
   } else {
     console.log(
       `\nPOST request no. ${
-        gallery.length + 1
+        gallery.getImagesCount() + 1
       } for Image Submission at ${new Date().toUTCString()}`
     );
     fs.renameSync(
@@ -74,12 +75,14 @@ app.post("/uploadImageAndData", (req, res) => {
       path.join(
         __dirname,
         "../private/images",
-        `img${String(gallery.length)}${path.parse(req.files.img.name).ext}`
+        `img${String(gallery.getImagesCount())}${
+          path.parse(req.files.img.name).ext
+        }`
       )
     );
 
-    gallery.push(
-      new GalleryDetail(gallery.length, title, description, submittedBy)
+    gallery.addImage(
+      new Image(gallery.getImagesCount(), title, description, submittedBy)
     );
 
     const jsonstr = JSON.stringify(gallery);
