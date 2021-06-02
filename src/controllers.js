@@ -1,39 +1,71 @@
 //project module
-const { getAbsolutePath } = require("./appUtils");
+const {
+  getAbsolutePath,
+  isValidRequest,
+  updateImagesGallery,
+  removeInvalidImg,
+} = require("./appUtils");
 
-const homePage = getAbsolutePath("./public/home.html");
-const submissionSuccessPage = getAbsolutePath("./public/submissionSuccess.html");
-const submissionFailurePage = getAbsolutePath("./public/submissionFail.html");
-const galleryPage = getAbsolutePath("./public/gallery.html");
+const {
+  HOME_HTML,
+  GALLERY_HTML,
+  SUBMISSION_SUCCESS_HTML,
+  SUBMISSION_FAILURE_HTML,
+} = require("./constants");
 
+const homePage = getAbsolutePath(HOME_HTML);
+const galleryPage = getAbsolutePath(GALLERY_HTML);
+const submissionSuccessPage = getAbsolutePath(SUBMISSION_SUCCESS_HTML);
+const submissionFailurePage = getAbsolutePath(SUBMISSION_FAILURE_HTML);
+
+const logger = function (req, res, next) {
+  console.log(`Request method : ${req.method}`);
+  console.log(`Request URL :  ${req.url}`);
+  console.log(`At ${new Date().toLocaleString()}`);
+  console.log(`Response statusCode : ${res.statusCode}`);
+  console.log("\n======================================");
+  next();
+};
 //serve Home Page
-const serveHomePage = function (res) {
-  console.log(`Serving Home Page at ${new Date().toUTCString()}`);
+const serveHomePage = function (req, res) {
   res.sendFile(homePage);
 };
 
 //serve submission success page
-const serveSubmissionSuccessPage = function (res) {
-  console.log(`Serving Submission Success Page at ${new Date().toUTCString()}`);
+const serveSubmissionSuccessPage = function (req, res) {
   res.sendFile(submissionSuccessPage);
 };
 
 //serve submission fail page
-const serveSubmissionFailPage = function (res) {
-  console.log(`Serving Submission Fail Page at ${new Date().toUTCString()}`);
+const serveSubmissionFailPage = function (req, res) {
   res.sendFile(submissionFailurePage);
 };
 
 //serve gallery page
-const serveGallery = function (res) {
-  console.log(`Serving Gallery Page at ${new Date().toUTCString()}`);
+const serveGallery = function (req, res) {
   res.sendFile(galleryPage);
+};
+
+const uploadImageData = function (req, res) {
+  const { gallery } = req.app.locals;
+  if (isValidRequest(req)) {
+    if (updateImagesGallery(req, gallery)) {
+      serveSubmissionSuccessPage(req, res);
+    } else {
+      serveSubmissionFailPage(req, res);
+    }
+  } else {
+    removeInvalidImg(req);
+    serveSubmissionFailPage(req, res);
+  }
 };
 
 // export controllers
 module.exports = {
+  logger,
   serveHomePage,
   serveSubmissionSuccessPage,
   serveSubmissionFailPage,
   serveGallery,
+  uploadImageData,
 };

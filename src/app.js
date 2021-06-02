@@ -1,18 +1,16 @@
 //node module
 const express = require("express");
 const expressFormidable = require("express-formidable");
+
 //project module
 const {
   serveHomePage,
-  serveSubmissionSuccessPage,
-  serveSubmissionFailPage,
   serveGallery,
+  uploadImageData,
+  logger,
 } = require("./controllers");
 const {
-  removeInvalidImg,
   getAbsoluteImgDirPath,
-  updateImagesGallery,
-  isValidRequest,
   createGalleryJSON,
   createImageDirectory,
 } = require("./appUtils");
@@ -37,31 +35,14 @@ app.use(
     multiples: false,
   })
 );
+app.use(logger);
 
-//app route
-app.get("/", (req, res) => {
-  console.log(`\nRequest for Home Page at ${new Date().toUTCString()}`);
-  serveHomePage(res);
-});
 
-app.post("/uploadImageAndData", (req, res) => {
-  console.log(`\nRequest for Image Upload at ${new Date().toUTCString()}`);
-  if (isValidRequest(req)) {
-    if (updateImagesGallery(req, app.locals.gallery)) {
-      serveSubmissionSuccessPage(res);
-    } else {
-      serveSubmissionFailPage(res);
-    }
-  } else {
-    removeInvalidImg(req);
-    serveSubmissionFailPage(res);
-  }
-});
+//app routes
+app.get("/", serveHomePage);
+app.post("/uploadImageAndData", uploadImageData);
+app.get("/gallery", serveGallery);
 
-app.get("/gallery", (req, res) => {
-  console.log(`\nRequest for Gallery at ${new Date().toUTCString()}`);
-  serveGallery(res);
-});
 
 // export app
 module.exports = app;
