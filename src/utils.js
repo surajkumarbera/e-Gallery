@@ -1,2 +1,7 @@
-// move the #checking required files part here
-// both the places , we can use a single method
+const path = require("path");
+
+const joinPath = function (pathToJoin) {
+  return path.join(__dirname, pathToJoin);
+};
+
+module.exports = { joinPath };
