@@ -1,7 +1,8 @@
+//node module
 const fs = require("fs");
 const path = require("path");
-
-const { 
+//project module
+const {
   IMAGES_FOLDER_PATH,
   GALLERY_FOLDER_PATH,
   GALLERY_JSON_FILE_PATH
@@ -13,6 +14,7 @@ const {
   json_write
 } = require("./utils");
 const Image = require("./models/Image");
+
 //validate req of img submission
 const req_isValid = (req) => {
   const { title, description, submittedBy } = req.fields;
@@ -53,7 +55,7 @@ const update_imgs_gallery = (req, gallery) => {
   );
   gallery.addImage(uploadedImage);
   json_write(gallery);
-  console.log(`json update successful`, gallery);
+  console.log(`json update successful`);
   return true;
 };
 
@@ -70,14 +72,17 @@ const removeInvalidImg = (req) => {
   return true;
 };
 
+//get absolute path
 const abs_path = (rel_path) => {
   return path.join(__dirname, "../", rel_path);
 }
 
+// absolute path for image folder
 const abs_imgdir_path = () => {
-  let str =  path.join(__dirname, "../", IMAGES_FOLDER_PATH);
+  let str = abs_path(IMAGES_FOLDER_PATH);
   return str;
 }
+
 // export functions
 module.exports = {
   req_isValid,

@@ -1,3 +1,4 @@
+//Image class
 class Image {
   constructor(id, title, description, submittedBy) {
     this.id = id;

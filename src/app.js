@@ -1,6 +1,7 @@
+//node module
 const express = require("express");
 const expressFormidable = require("express-formidable");
-
+//project module
 const {
   serveHomePage,
   serveSubmissionSuccessPage,
@@ -16,8 +17,6 @@ const {
   abs_imgdir_path
 } = require("./appUtils");
 const Gallery = require("./models/Gallery");
-
-
 
 //check and create required folder for images and required json file for Gallery data
 check_create_imgsdir();

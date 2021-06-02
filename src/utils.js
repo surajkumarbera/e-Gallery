@@ -1,3 +1,4 @@
+//node module
 const path = require("path");
 const fs = require("fs");
 const { exit } = require("process");
@@ -53,7 +54,7 @@ const json_read = () => {
   } catch (err) {
     console.log(err);
     exit;
-  } 
+  }
 };
 
 const json_write = (jsonObj) => {
@@ -61,12 +62,12 @@ const json_write = (jsonObj) => {
   let jsonPath = path.join(__dirname, "../", GALLERY_JSON_FILE_PATH);
   let jsonStr = JSON.stringify(jsonObj);
   try {
-    fs.writeFileSync(jsonPath, jsonStr,"utf-8");
+    fs.writeFileSync(jsonPath, jsonStr, "utf-8");
     return jsonStr;
   } catch (err) {
     console.log(err);
     exit(1);
-  } 
+  }
 };
 
 const json_Obj = () => {
