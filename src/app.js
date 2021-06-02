@@ -14,7 +14,10 @@ const {
   createGalleryJSON,
   createImageDirectory,
 } = require("./appUtils");
-
+const {
+  readJson,
+  createJsonObject
+} = require("./utils");
 const Gallery = require("./models/Gallery");
 
 //check and create required folder for images and required json file for Gallery data
@@ -26,6 +29,9 @@ const app = express();
 
 // Gallery obj initializing to app
 const gallery = new Gallery();
+if(readJson() !== "") {
+  gallery.images = createJsonObject().images;
+}
 app.locals.gallery = gallery;
 
 //add express-formidable middleware and specify upload directory
