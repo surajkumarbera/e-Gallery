@@ -1,62 +1,90 @@
-const path = require("path");
 const fs = require("fs");
+const path = require("path");
 
-const { IMAGE_STORAGE_PATH, GALLERY_PATH } = require("./constants");
+const { 
+  IMAGES_FOLDER_PATH,
+  GALLERY_FOLDER_PATH,
+  GALLERY_JSON_FILE_PATH
+} = require("./constants");
+const {
+  check_create_dirs,
+  check_create_file,
+  formatImgFileName,
+  json_write
+} = require("./utils");
+const Image = require("./models/Image");
+//validate req of img submission
+const req_isValid = (req) => {
+  const { title, description, submittedBy } = req.fields;
+  const { img } = req.files;
 
-const writeContent = function (path, content, fileSystem = fs) {
-  const jsonstr = JSON.stringify(content);
-  fileSystem.writeFileSync(path, jsonstr);
-};
-
-const createImageStorage = function () {
-  if (!fs.existsSync(IMAGE_STORAGE_PATH)) {
-    let dirs = IMAGE_STORAGE_PATH.split("/");
-    let absolutePath = path.join(__dirname, "../"); // root directory
-    dirs.forEach((dir) => {
-      absolutePath = path.join(absolutePath, dir);
-      if (!fs.existsSync(absolutePath)) {
-        fs.mkdirSync(absolutePath);
-      }
-    });
-  }
-};
-
-const createGalleryStorage = function () {
-  if (!fs.existsSync(GALLERY_PATH)) {
-    let dirs = GALLERY_PATH.split("/");
-    let absolutePath = path.join(__dirname, "../"); // root directory
-    dirs.forEach((dir) => {
-      absolutePath = path.join(absolutePath, dir);
-      if (dir == "gallery.json") {
-        writeContent(absolutePath, "[]");
-      } else if (!fs.existsSync(absolutePath)) {
-        fs.mkdirSync(absolutePath);
-      }
-    });
-  }
-};
-
-const areMandatoryFieldsMissing = function (request) {
-  const { title, description, submittedBy } = request.fields;
-  const { img } = request.files;
-  return (
+  return (!(
     title == "" || description == "" || submittedBy == "" || img.name == ""
-  );
+  ));
 };
 
-const formatFileName = function (image, imageNumber) {
-  const { name } = image;
-  return path.join(
-    __dirname,
-    "../private/images",
-    `img${imageNumber}${path.parse(name).ext}`
-  );
+//check and create imgs directory to store img files
+const check_create_imgsdir = () => {
+  check_create_dirs(IMAGES_FOLDER_PATH);
 };
 
+// check and create gallery.json file to store gallery data
+const check_create_galleryJSON = () => {
+  check_create_dirs(GALLERY_FOLDER_PATH);
+  check_create_file(GALLERY_JSON_FILE_PATH);
+};
+
+// update img in imgs folder and json file of gallery data
+const update_imgs_gallery = (req, gallery) => {
+  const { title, description, submittedBy } = req.fields;
+  const { img } = req.files;
+  try {
+    fs.renameSync(img.path, formatImgFileName(gallery.getImagesCount(), img.name));
+    console.log(`File rename successful`)
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+  const uploadedImage = new Image(
+    gallery.getImagesCount(),
+    title,
+    description,
+    submittedBy
+  );
+  gallery.addImage(uploadedImage);
+  json_write(gallery);
+  console.log(`json update successful`, gallery);
+  return true;
+};
+
+//remove img file of invalid submission request
+const removeInvalidImg = (req) => {
+  const { img } = req.files;
+  try {
+    fs.unlinkSync(img.path);
+    console.log(`invalid img file deleted`)
+  } catch (err) {
+    console.log(arr);
+    return false;
+  }
+  return true;
+};
+
+const abs_path = (rel_path) => {
+  return path.join(__dirname, "../", rel_path);
+}
+
+const abs_imgdir_path = () => {
+  let str =  path.join(__dirname, "../", IMAGES_FOLDER_PATH);
+  return str;
+}
+// export functions
 module.exports = {
-  createImageStorage,
-  createGalleryStorage,
-  areMandatoryFieldsMissing,
-  formatFileName,
-  writeContent,
+  req_isValid,
+  check_create_imgsdir,
+  check_create_galleryJSON,
+  update_imgs_gallery,
+  removeInvalidImg,
+  abs_imgdir_path,
+  abs_path
 };

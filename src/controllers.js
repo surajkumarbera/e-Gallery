@@ -1,18 +1,32 @@
-// move all the controllers from app.js to here
-
-const { joinPath } = require("./utils");
-const homePage = () => joinPath("../public/index.html");
-const galleryPage = () => joinPath("../public/gallery.html");
-
-const serveHomePage = function (req, res) {
-  console.log(`\nGET request for Home Page at ${new Date().toUTCString()}`);
-  res.sendFile(homePage());
+const { abs_path } = require("./appUtils");
+//serve Home Page
+const serveHomePage = function (res) {
+  console.log(`Serving Home Page at ${new Date().toUTCString()}`);
+  res.sendFile(abs_path("./public/home.html"));
 };
 
-const uploadImageData = function () {};
-const serveGallery = function (req, res) {
-  console.log(`\nGET request for Gallery Page at ${new Date().toUTCString()}`);
-  res.sendFile(galleryPage());
+//serve submission success page
+const serveSubmissionSuccessPage = function (res) {
+  console.log(`Serving Submission Success Page at ${new Date().toUTCString()}`);
+  res.sendFile(abs_path("./public/submissionSuccess.html"));
 };
 
-module.exports = { serveHomePage, uploadImageData, serveGallery };
+//serve submission fail page
+const serveSubmissionFailPage = function (res) {
+  console.log(`Serving Submission Fail Page at ${new Date().toUTCString()}`);
+  res.sendFile(abs_path("./public/submissionFail.html"));
+};
+
+//serve gallery page
+const serveGallery = function (res) {
+  console.log(`Serving Gallery Page at ${new Date().toUTCString()}`);
+  res.sendFile(abs_path("./public/gallery.html"));
+};
+
+// export serve page functions
+module.exports = {
+  serveHomePage,
+  serveSubmissionSuccessPage,
+  serveSubmissionFailPage,
+  serveGallery
+};

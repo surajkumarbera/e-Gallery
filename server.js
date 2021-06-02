@@ -2,9 +2,10 @@
 const IP = "127.0.0.1";
 const PORT = process.env.PORT | 3300;
 
+//initializing express app
 const app = require("./src/app.js");
 
-//listening server
+//start listening server...
 app.listen(PORT, IP, (err) => {
   if (err) {
     console.log(err);

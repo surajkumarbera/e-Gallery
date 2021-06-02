@@ -1,6 +1,16 @@
+const {
+  json_read,
+  json_Obj
+} = require("../utils");
 class Gallery {
   constructor() {
-    this.images = [];
+    if(json_read() === ""){
+      console.log("gallery init > empty");
+      this.images = [];
+    } else {
+      console.log("gallery init > json");
+      this.images = json_Obj().images;
+    }
   }
 
   addImage(image) {

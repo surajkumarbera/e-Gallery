@@ -1,83 +1,67 @@
 const express = require("express");
 const expressFormidable = require("express-formidable");
-const fs = require("fs");
 
 const {
-  createImageStorage,
-  createGalleryStorage,
-  areMandatoryFieldsMissing,
-  formatFileName,
-  writeContent,
+  serveHomePage,
+  serveSubmissionSuccessPage,
+  serveSubmissionFailPage,
+  serveGallery
+} = require("./controllers");
+const {
+  req_isValid,
+  check_create_imgsdir,
+  check_create_galleryJSON,
+  update_imgs_gallery,
+  removeInvalidImg,
+  abs_imgdir_path
 } = require("./appUtils");
-
-const { joinPath } = require("./utils");
-const { serveHomePage, serveGallery } = require("./controllers");
-
-const { GALLERY_PATH } = require("./constants");
 const Gallery = require("./models/Gallery");
-const Image = require("./models/Image");
 
-const imagesDirectory = () => joinPath("../private/images");
 
-//checking required files
-createImageStorage();
-createGalleryStorage();
 
-//init express
+//check and create required folder for images and required json file for Gallery data
+check_create_imgsdir();
+check_create_galleryJSON();
+
+//initializing express
 const app = express();
+
+// Gallery obj initializing to app
 const gallery = new Gallery();
 app.locals.gallery = gallery;
 
-//add middleware
+//add express-formidable middleware and specify upload directory
 app.use(
   expressFormidable({
-    uploadDir: imagesDirectory(),
+    uploadDir: abs_imgdir_path(),
     multiples: false,
   })
 );
 
 //app route
-app.get("/", serveHomePage);
+app.get("/", (req, res) => {
+  console.log(`\nRequest for Home Page at ${new Date().toUTCString()}`);
+  serveHomePage(res);
+});
 
 app.post("/uploadImageAndData", (req, res) => {
-  const { title, description, submittedBy } = req.fields;
-  const { img } = req.files;
-  const { gallery } = req.app.locals;
-
-  if (areMandatoryFieldsMissing(req)) {
-    console.log(
-      `\nA bad POST request for Image Submission at ${new Date().toUTCString()}`
-    );
-    res.send(`<div>
-                <h3>Image has not been Submitted. Fill All The Fields Carefully</h3>
-                <button onclick="location.href = '/'">Try uploading again</button>
-              </div>`);
+  console.log(`\nRequest for Image Upload at ${new Date().toUTCString()}`);
+  if (req_isValid(req)) {
+    if (update_imgs_gallery(req, app.locals.gallery)) {
+      serveSubmissionSuccessPage(res);
+    } else {
+      serveSubmissionFailPage(res);
+    }
   } else {
-    console.log(
-      `\nPOST request no. ${
-        gallery.getImagesCount() + 1
-      } for Image Submission at ${new Date().toUTCString()}`
-    );
-
-    const fileName = formatFileName(img, gallery.getImagesCount());
-    fs.renameSync(img.path, fileName);
-
-    const uploadedImage = new Image(
-      gallery.getImagesCount(),
-      title,
-      description,
-      submittedBy
-    );
-    gallery.addImage(uploadedImage);
-    writeContent(GALLERY_PATH, gallery, fs);
-
-    res.send(`<div>
-                <h3>Image has been submitted successfully</h3>
-                <button onclick="location.href = '/'">Upload more/Back to HomePage</button>
-              </div>`);
+    removeInvalidImg(req);
+    serveSubmissionFailPage(res);
   }
 });
 
-app.get("/gallery", serveGallery);
+app.get("/gallery", (req, res) => {
+  console.log(`\nRequest for Gallery at ${new Date().toUTCString()}`);
+  serveGallery(res);
+});
 
+// export app
 module.exports = app;
