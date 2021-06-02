@@ -48,9 +48,10 @@ app.post("/uploadImageAndData", (req, res) => {
     console.log(
       `\nA bad POST request for Image Submission at ${new Date().toUTCString()}`
     );
-    res.send(
-      "<h1>Image has not been Submitted<br>Fill All The Fields Carefully</h1>"
-    );
+    res.send(`<div>
+                <h3>Image has not been Submitted. Fill All The Fields Carefully</h3>
+                <button onclick="location.href = '/'">Try uploading again</button>
+              </div>`);
   } else {
     console.log(
       `\nPOST request no. ${
@@ -70,7 +71,10 @@ app.post("/uploadImageAndData", (req, res) => {
     gallery.addImage(uploadedImage);
     writeContent(GALLERY_PATH, gallery, fs);
 
-    res.send("<h1>Image has been Submitted Successfully</h1>");
+    res.send(`<div>
+                <h3>Image has been submitted successfully</h3>
+                <button onclick="location.href = '/'">Upload more/Back to HomePage</button>
+              </div>`);
   }
 });
 
