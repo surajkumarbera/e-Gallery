@@ -6,21 +6,22 @@ const {
   serveHomePage,
   serveSubmissionSuccessPage,
   serveSubmissionFailPage,
-  serveGallery
+  serveGallery,
 } = require("./controllers");
 const {
-  req_isValid,
-  check_create_imgsdir,
-  check_create_galleryJSON,
-  update_imgs_gallery,
   removeInvalidImg,
-  abs_imgdir_path
+  getAbsoluteImgDirPath,
+  updateImagesGallery,
+  isValidRequest,
+  createGalleryJSON,
+  createImageDirectory,
 } = require("./appUtils");
+
 const Gallery = require("./models/Gallery");
 
 //check and create required folder for images and required json file for Gallery data
-check_create_imgsdir();
-check_create_galleryJSON();
+createImageDirectory();
+createGalleryJSON();
 
 //initializing express
 const app = express();
@@ -32,7 +33,7 @@ app.locals.gallery = gallery;
 //add express-formidable middleware and specify upload directory
 app.use(
   expressFormidable({
-    uploadDir: abs_imgdir_path(),
+    uploadDir: getAbsoluteImgDirPath(),
     multiples: false,
   })
 );
@@ -45,8 +46,8 @@ app.get("/", (req, res) => {
 
 app.post("/uploadImageAndData", (req, res) => {
   console.log(`\nRequest for Image Upload at ${new Date().toUTCString()}`);
-  if (req_isValid(req)) {
-    if (update_imgs_gallery(req, app.locals.gallery)) {
+  if (isValidRequest(req)) {
+    if (updateImagesGallery(req, app.locals.gallery)) {
       serveSubmissionSuccessPage(res);
     } else {
       serveSubmissionFailPage(res);

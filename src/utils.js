@@ -3,8 +3,10 @@ const path = require("path");
 const fs = require("fs");
 const { exit } = require("process");
 
+const { GALLERY_JSON_FILE_PATH } = require("./constants");
+
 // check and create dir
-const check_create_dirs = (rel_path) => {
+const checkAndCreateDirectory = (rel_path) => {
   let absolutePath = path.join(__dirname, "../"); // root directory
   if (!fs.existsSync(path.join(absolutePath, rel_path))) {
     let dirs = rel_path.split("/");
@@ -24,7 +26,7 @@ const check_create_dirs = (rel_path) => {
 };
 
 // check and create file
-const check_create_file = (rel_path) => {
+const checkAndCreateFile = (rel_path) => {
   let absolutePath = path.join(__dirname, "../", rel_path); // absolute file path
   if (!fs.existsSync(absolutePath)) {
     try {
@@ -45,8 +47,7 @@ const formatImgFileName = (num, imgName) => {
   return formatedImgName;
 };
 
-const json_read = () => {
-  const { GALLERY_JSON_FILE_PATH } = require("../src/constants");
+const readJson = () => {
   let jsonPath = path.join(__dirname, "../", GALLERY_JSON_FILE_PATH);
   try {
     let jsonStr = fs.readFileSync(jsonPath, "utf-8");
@@ -57,8 +58,8 @@ const json_read = () => {
   }
 };
 
-const json_write = (jsonObj) => {
-  const { GALLERY_JSON_FILE_PATH } = require("../src/constants");
+const writeJson = (jsonObj) => {
+
   let jsonPath = path.join(__dirname, "../", GALLERY_JSON_FILE_PATH);
   let jsonStr = JSON.stringify(jsonObj);
   try {
@@ -70,19 +71,18 @@ const json_write = (jsonObj) => {
   }
 };
 
-const json_Obj = () => {
-  let jsonstr = json_read();
+const createJsonObject = () => {
+  let jsonstr = readJson();
   let jsonObj = JSON.parse(jsonstr);
   return jsonObj;
 };
 
-
 // export functions
 module.exports = {
-  check_create_dirs,
-  check_create_file,
+  checkAndCreateDirectory,
+  checkAndCreateFile,
   formatImgFileName,
-  json_read,
-  json_Obj,
-  json_write
+  readJson,
+  createJsonObject,
+  writeJson,
 };
