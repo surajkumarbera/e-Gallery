@@ -5,7 +5,6 @@ const {
   submissionSuccessPage,
   submissionFailurePage,
 } = require("./helpers");
-
 const { updateImagesGallery, removeInvalidImage } = require("./controllers");
 // log basic info of request/response
 const logger = function (req, res, next) {
@@ -49,7 +48,8 @@ const uploadImageStoreData = function (req, res) {
 
 // send total img count from gallery obj length
 const getTotalImgCount = function(req, res) {
-  res.send("10");
+  const { gallery } = req.app.locals;
+  res.send(String(gallery.getImagesCount()));
 } ;
 
 //send img file 
