@@ -1,6 +1,6 @@
 //IP and Port
 const IP = "127.0.0.1";
-const PORT = process.env.PORT | 3300;
+const PORT = process.env.PORT || 3300;
 
 //initializing express app
 const app = require("./src/app.js");

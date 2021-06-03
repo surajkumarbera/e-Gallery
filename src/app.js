@@ -1,54 +1,45 @@
-//node module
+// node module
 const express = require("express");
 const expressFormidable = require("express-formidable");
 
-//project module
+// project module
 const {
   serveHomePage,
   serveGallery,
-  uploadImageData,
+  uploadImageStoreData,
   logger,
-} = require("./controllers");
-const {
-  getAbsoluteImgDirPath,
-  createGalleryJSON,
-  createImageDirectory,
-} = require("./appUtils");
-const {
-  readJson,
-  createJsonObject
-} = require("./utils");
+} = require("./handlers");
+
+const { readGalleryFileContent, imageDir } = require("./appUtils");
+const { isEmpty } = require("./utils");
 const Gallery = require("./models/Gallery");
 
-//check and create required folder for images and required json file for Gallery data
-createImageDirectory();
-createGalleryJSON();
+const initializeOrRestoreGallery = () => {
+  const gallery = new Gallery();
+  const galleryData = readGalleryFileContent();
+  if (!isEmpty(galleryData)) gallery.setImages(galleryData.images);
+  return gallery;
+};
 
-//initializing express
+// add express-formidable middleware and specify upload directory
+const expressFormidableMiddleWare = expressFormidable({
+  uploadDir: imageDir,
+  multiples: false,
+});
+
+// initializing express
 const app = express();
-
 // Gallery obj initializing to app
-const gallery = new Gallery();
-if(readJson() !== "") {
-  gallery.images = createJsonObject().images;
-}
-app.locals.gallery = gallery;
+app.locals.gallery = initializeOrRestoreGallery();
 
-//add express-formidable middleware and specify upload directory
-app.use(
-  expressFormidable({
-    uploadDir: getAbsoluteImgDirPath(),
-    multiples: false,
-  })
-);
+// middlewares
+app.use(expressFormidableMiddleWare);
 app.use(logger);
-
 
 //app routes
 app.get("/", serveHomePage);
-app.post("/uploadImageAndData", uploadImageData);
+app.post("/uploadImageAndData", uploadImageStoreData);
 app.get("/gallery", serveGallery);
-
 
 // export app
 module.exports = app;

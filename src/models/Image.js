@@ -1,10 +1,8 @@
-//Image class
 class Image {
-  constructor(id, title, description, submittedBy) {
+  constructor(id, name) {
     this.id = id;
-    this.title = title;
-    this.description = description;
-    this.submittedBy = submittedBy;
+    this.name = name;
   }
 }
+
 module.exports = Image;
