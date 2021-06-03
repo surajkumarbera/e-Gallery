@@ -8,7 +8,8 @@ const {
   serveGallery,
   uploadImageStoreData,
   logger,
-  getTotalImgCount
+  getTotalImgCount,
+  getImg
 } = require("./handlers");
 
 const { readGalleryFileContent, imageDir } = require("./appUtils");
@@ -42,6 +43,6 @@ app.get("/", serveHomePage);
 app.post("/uploadImageAndData", uploadImageStoreData);
 app.get("/gallery", serveGallery);
 app.get("/totalImgCount", getTotalImgCount);
-
+app.get("/getImg:id", getImg);
 // export app
 module.exports = app;

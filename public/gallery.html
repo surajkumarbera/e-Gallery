@@ -15,12 +15,17 @@
   </div>
 
   <script>
-    var totalImgCount = 0;
-    $.get("/totalImgCount", (data, status) => {
-      console.log(data, status);
+    let totalImgCount = 0
+    jQuery.ajaxSetup({async:false});
+    $.get("/totalImgCount", (data) => {
       totalImgCount = data;
     });
-
+    for(let i = 0; i < totalImgCount; i++){
+      $.get("/getImg"+i, (data) => {
+      console.log(data);
+    });
+    jQuery.ajaxSetup({async:true});
+    }
   </script>
 </body>
 

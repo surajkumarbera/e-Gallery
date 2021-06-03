@@ -47,10 +47,15 @@ const uploadImageStoreData = function (req, res) {
   }
 };
 
-// get total img count from gallery obj length
+// send total img count from gallery obj length
 const getTotalImgCount = function(req, res) {
-  res.send("100");
+  res.send("10");
 } ;
+
+//send img file 
+const getImg = function(req, res) {
+  res.send(req.url);
+};
 
 module.exports = {
   logger,
@@ -59,5 +64,6 @@ module.exports = {
   serveSubmissionFailPage,
   serveSubmissionSuccessPage,
   uploadImageStoreData,
-  getTotalImgCount
+  getTotalImgCount,
+  getImg
 };
