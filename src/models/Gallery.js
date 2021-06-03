@@ -1,19 +1,22 @@
 //Gallery class
 class Gallery {
   constructor() {
-    this.images = [];
+    this.images = {};
   }
 
   addImage(image) {
     this.images[image.id] = image;
   }
 
-  getImage(image) {
-    return this.images[image.id];
+  getImages() {
+    return this.images;
+  }
+  setImages(images) {
+    this.images = images;
   }
 
   getImagesCount() {
-    return this.images.length;
+    return Object.keys(this.images).length;
   }
 }
 

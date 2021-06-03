@@ -1,71 +1,61 @@
-//project module
+// project module
 const {
-  getAbsolutePath,
-  isValidRequest,
-  updateImagesGallery,
-  removeInvalidImg,
+  readGalleryFileContent,
+  createRequiredDirectories,
+  writeGalleryFileContent,
 } = require("./appUtils");
 
-const {
-  HOME_HTML,
-  GALLERY_HTML,
-  SUBMISSION_SUCCESS_HTML,
-  SUBMISSION_FAILURE_HTML,
-} = require("./constants");
+const { formatImgFileName, generateFileName } = require("./helpers");
+const { renameFile, unlinkFile } = require("./utils");
+const Image = require("./models/Image");
+const ImageInfo = require("./models/ImageInfo");
 
-const homePage = getAbsolutePath(HOME_HTML);
-const galleryPage = getAbsolutePath(GALLERY_HTML);
-const submissionSuccessPage = getAbsolutePath(SUBMISSION_SUCCESS_HTML);
-const submissionFailurePage = getAbsolutePath(SUBMISSION_FAILURE_HTML);
+createRequiredDirectories();
+const galleryData = readGalleryFileContent();
 
-const logger = function (req, res, next) {
-  console.log(`Request method : ${req.method}`);
-  console.log(`Request URL :  ${req.url}`);
-  console.log(`At ${new Date().toLocaleString()}`);
-  console.log(`Response statusCode : ${res.statusCode}`);
-  console.log("\n======================================");
-  next();
-};
-//serve Home Page
-const serveHomePage = function (req, res) {
-  res.sendFile(homePage);
+// update image storage
+const appendNewImageData = (imageInfo) => {
+  const { image } = imageInfo;
+  galleryData.images[image.id] = imageInfo;
+  writeGalleryFileContent(galleryData);
 };
 
-//serve submission success page
-const serveSubmissionSuccessPage = function (req, res) {
-  res.sendFile(submissionSuccessPage);
+// add image to Gallery
+const addImageToGallery = (gallery, imageInfo) => {
+  gallery.addImage(imageInfo);
 };
 
-//serve submission fail page
-const serveSubmissionFailPage = function (req, res) {
-  res.sendFile(submissionFailurePage);
-};
-
-//serve gallery page
-const serveGallery = function (req, res) {
-  res.sendFile(galleryPage);
-};
-
-const uploadImageData = function (req, res) {
+// upload image and store data
+const updateImagesGallery = (req) => {
+  const { title, description, submittedBy } = req.fields;
+  const { img } = req.files;
   const { gallery } = req.app.locals;
-  if (isValidRequest(req)) {
-    if (updateImagesGallery(req, gallery)) {
-      serveSubmissionSuccessPage(req, res);
-    } else {
-      serveSubmissionFailPage(req, res);
-    }
-  } else {
-    removeInvalidImg(req);
-    serveSubmissionFailPage(req, res);
-  }
+
+  const imageId = gallery.getImagesCount();
+  const imageName = generateFileName(imageId + 1, img);
+  const formattedFileName = formatImgFileName(imageName);
+
+  const newUploadedImage = new Image(imageId, imageName);
+  const newImageInfo = new ImageInfo(
+    newUploadedImage,
+    title,
+    description,
+    submittedBy
+  );
+
+  addImageToGallery(gallery, newImageInfo);
+  appendNewImageData(newImageInfo);
+  renameFile(img.path, formattedFileName);
+};
+
+// remove invalid image from image folder
+const removeInvalidImage = (req) => {
+  const imagePathtoBeUnlinked = req.files.img.path;
+  unlinkFile(imagePathtoBeUnlinked);
 };
 
 // export controllers
 module.exports = {
-  logger,
-  serveHomePage,
-  serveSubmissionSuccessPage,
-  serveSubmissionFailPage,
-  serveGallery,
-  uploadImageData,
+  updateImagesGallery,
+  removeInvalidImage,
 };
