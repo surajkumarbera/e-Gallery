@@ -5,15 +5,20 @@ We can just have a look here and get the idea of the status of the whole work
 
 ### Todo
 
-- [ ] create utils.js to separate the common utitlity methods
-  - [ ] #chekcing required files
-- [ ] separate the contoller methods from app.js
+- [ ] Show Images in Gallery
+- [ ] Fetch Image-Submitted by whom details
+- [ ] Show Image with Submitted by whom in Gallery
+- [ ] UI Enhancement
+- [ ] Write tests (depends on...)
+- [ ] Put Pre-commit hooks
+- [ ] Add Linter
 
 ### In Progress
 
-- [ ] folder structure modification
+- [ ] Fetch Images
 
 ### Done ✓
 
 - [x] Basic functionality
   - [ ] image submission
+- [x] Basic UI skeleton
