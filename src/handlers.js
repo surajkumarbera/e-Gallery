@@ -1,6 +1,7 @@
 const {
   isValidRequest,
   homePage,
+  uploadPage,
   galleryPage,
   submissionSuccessPage,
   submissionFailurePage,
@@ -19,6 +20,11 @@ const logger = function (req, res, next) {
 //serve Home Page
 const serveHomePage = function (req, res) {
   res.sendFile(homePage);
+};
+
+//serve Upload Page
+const serveUploadPage = function (req, res) {
+  res.sendFile(uploadPage);
 };
 
 // serve submission success page
@@ -59,6 +65,7 @@ const getImg = function(req, res) {
 
 module.exports = {
   logger,
+  serveUploadPage,
   serveHomePage,
   serveGallery,
   serveSubmissionFailPage,

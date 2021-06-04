@@ -4,6 +4,7 @@ const expressFormidable = require("express-formidable");
 
 // project module
 const {
+  serveUploadPage,
   serveHomePage,
   serveGallery,
   uploadImageStoreData,
@@ -40,6 +41,7 @@ app.use(logger);
 
 //app routes
 app.get("/", serveHomePage);
+app.get("/upload", serveUploadPage);
 app.post("/uploadImageAndData", uploadImageStoreData);
 app.get("/gallery", serveGallery);
 app.get("/totalImgCount", getTotalImgCount);

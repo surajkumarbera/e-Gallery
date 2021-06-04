@@ -13,20 +13,9 @@
   <div id="gallery">
     <h2>e-Gallary | All Gallery Images</h2>
   </div>
-
-  <script>
-    let totalImgCount = 0
-    jQuery.ajaxSetup({async:false});
-    $.get("/totalImgCount", (data) => {
-      totalImgCount = data;
-    });
-    for(let i = 0; i < totalImgCount; i++){
-      $.get("/getImg"+i, (data) => {
-      console.log(data);
-    });
-    jQuery.ajaxSetup({async:true});
-    }
-  </script>
+  <button onclick="location.href = '/'">Go Back to Home Page</button>
+  <button onclick="location.href = '/upload'">Try Uploading your art</button>
+  <script></script>
 </body>
 
 </html>

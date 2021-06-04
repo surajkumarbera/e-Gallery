@@ -7,9 +7,11 @@ const {
   GALLERY_HTML,
   SUBMISSION_SUCCESS_HTML,
   SUBMISSION_FAILURE_HTML,
+  UPLOAD_HTML
 } = require("./constants");
 
 const homePage = getAbsolutePath(HOME_HTML);
+const uploadPage = getAbsolutePath(UPLOAD_HTML);
 const galleryPage = getAbsolutePath(GALLERY_HTML);
 const submissionSuccessPage = getAbsolutePath(SUBMISSION_SUCCESS_HTML);
 const submissionFailurePage = getAbsolutePath(SUBMISSION_FAILURE_HTML);
@@ -39,6 +41,7 @@ const isValidRequest = (req) => {
 
 module.exports = {
   homePage,
+  uploadPage,
   galleryPage,
   submissionSuccessPage,
   submissionFailurePage,
