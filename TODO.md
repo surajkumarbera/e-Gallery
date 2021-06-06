@@ -5,7 +5,6 @@ We can just have a look here and get the idea of the status of the whole work
 
 ### Todo
 
-- [ ] Show Images in Gallery
 - [ ] Fetch Image-Submitted by whom details
 - [ ] Show Image with Submitted by whom in Gallery
 - [ ] UI Enhancement
@@ -15,8 +14,9 @@ We can just have a look here and get the idea of the status of the whole work
 
 ### In Progress
 
-- [ ] Fetch Images
-
+- [ ] Fetch Images 
+- [ ] Show Images in Gallery
+- [ ] Fetch Image-Submitted by whom details
 ### Done ✓
 
 - [x] Basic functionality

@@ -5,16 +5,17 @@ const {
   galleryPage,
   submissionSuccessPage,
   submissionFailurePage,
-} = require("./helpers");
+} = require('./helpers');
+const { readGalleryFileContent } = require('./appUtils');
 
-const { updateImagesGallery, removeInvalidImage } = require("./controllers");
+const { updateImagesGallery, removeInvalidImage } = require('./controllers');
 // log basic info of request/response
 const logger = function (req, res, next) {
   console.log(`Request method : ${req.method}`);
   console.log(`Request URL :  ${req.url}`);
   console.log(`At ${new Date().toLocaleString()}`);
   console.log(`Response statusCode : ${res.statusCode}`);
-  console.log("\n======================================");
+  console.log('\n======================================');
   next();
 };
 
@@ -38,9 +39,24 @@ const serveSubmissionFailPage = function (res) {
   res.sendFile(submissionFailurePage);
 };
 
+const getAllImagesDetails = () => {
+  const { images } = readGalleryFileContent();
+  return Object.values(images).map((img) => {
+    const { id, name, submittedBy } = img;
+    return {
+      id,
+      name,
+      submittedBy,
+    };
+  });
+};
+
 // serve gallery page
 const serveGallery = function (req, res) {
-  res.sendFile(galleryPage);
+  const allImagesDetails = getAllImagesDetails();
+  console.log(JSON.stringify(allImagesDetails), 'all Images Details');
+  res.send(JSON.stringify(allImagesDetails));
+  // res.sendFile(galleryPage);
 };
 
 const uploadImageStoreData = function (req, res) {

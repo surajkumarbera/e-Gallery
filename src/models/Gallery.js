@@ -1,4 +1,4 @@
-//Gallery class
+// Gallery class
 class Gallery {
   constructor() {
     this.images = {};
@@ -11,6 +11,7 @@ class Gallery {
   getImages() {
     return this.images;
   }
+
   setImages(images) {
     this.images = images;
   }

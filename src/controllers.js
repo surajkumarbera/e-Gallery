@@ -3,20 +3,19 @@ const {
   readGalleryFileContent,
   createRequiredDirectories,
   writeGalleryFileContent,
-} = require("./appUtils");
+} = require('./appUtils');
 
-const { formatImgFileName, generateFileName } = require("./helpers");
-const { renameFile, unlinkFile } = require("./utils");
-const Image = require("./models/Image");
-const ImageInfo = require("./models/ImageInfo");
+const { formatImgFileName, generateFileName } = require('./helpers');
+const { renameFile, unlinkFile } = require('./utils');
+const ImageInfo = require('./models/ImageInfo');
 
 createRequiredDirectories();
 const galleryData = readGalleryFileContent();
 
 // update image storage
 const appendNewImageData = (imageInfo) => {
-  const { image } = imageInfo;
-  galleryData.images[image.id] = imageInfo;
+  const { id } = imageInfo;
+  galleryData.images[id] = imageInfo;
   writeGalleryFileContent(galleryData);
 };
 
@@ -32,12 +31,11 @@ const updateImagesGallery = (req) => {
   const { gallery } = req.app.locals;
 
   const imageId = gallery.getImagesCount();
-  const imageName = generateFileName(imageId + 1, img);
+  const imageName = generateFileName(imageId, img);
   const formattedFileName = formatImgFileName(imageName);
-
-  const newUploadedImage = new Image(imageId, imageName);
   const newImageInfo = new ImageInfo(
-    newUploadedImage,
+    imageId,
+    imageName,
     title,
     description,
     submittedBy
