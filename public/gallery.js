@@ -3,6 +3,8 @@ const showEachImage = (img) => {
   const gallery = document.getElementById('gallery');
   const image = document.createElement('img');
   image.src = `/${name}`;
+  image.width = image.height = 250;
+  image.style = "margin: 5px;";
   gallery.appendChild(image);
 };
 
