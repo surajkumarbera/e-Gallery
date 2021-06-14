@@ -1,14 +1,14 @@
-const fs = require("fs");
-const path = require("path");
-const { getAbsolutePath } = require("./utils");
+const fs = require('fs');
+const path = require('path');
+const { getAbsolutePath } = require('./utils');
 
 const {
   HOME_HTML,
   GALLERY_HTML,
   SUBMISSION_SUCCESS_HTML,
   SUBMISSION_FAILURE_HTML,
-  UPLOAD_HTML
-} = require("./constants");
+  UPLOAD_HTML,
+} = require('./constants');
 
 const homePage = getAbsolutePath(HOME_HTML);
 const uploadPage = getAbsolutePath(UPLOAD_HTML);
@@ -22,7 +22,7 @@ const generateFileName = (imgNo, img) => {
 };
 // get formatted file name
 const formatImgFileName = (imgName) => {
-  let formatedImgName = path.join(__dirname, "../private/images", imgName);
+  let formatedImgName = path.join(__dirname, '../private/images', imgName);
   return formatedImgName;
 };
 
@@ -32,10 +32,10 @@ const isValidRequest = (req) => {
   const { img } = req.files;
 
   return !(
-    title == "" ||
-    description == "" ||
-    submittedBy == "" ||
-    img.name == ""
+    title == '' ||
+    description == '' ||
+    submittedBy == '' ||
+    img.name == ''
   );
 };
 

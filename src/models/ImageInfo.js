@@ -1,7 +1,8 @@
-//Image class
+// Image class
 class ImageInfo {
-constructor(image, title, description, submittedBy) {
-    this.image = image;
+  constructor(id, name, title, description, submittedBy) {
+    this.id = id;
+    this.name = name;
     this.title = title;
     this.description = description;
     this.submittedBy = submittedBy;

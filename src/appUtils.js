@@ -1,20 +1,19 @@
-//node module
-const fs = require("fs");
-const path = require("path");
+// node module
+const path = require('path');
 
-//project module
+// project module
 const {
   IMAGES_FOLDER_PATH,
   GALLERY_FOLDER_PATH,
   GALLERY_JSON_FILE_PATH,
-} = require("./constants");
+} = require('./constants');
 
 const {
   checkAndCreateDirectory,
   readFileContent,
   writeFileContent,
   getAbsolutePath,
-} = require("./utils");
+} = require('./utils');
 
 const imageDir = getAbsolutePath(IMAGES_FOLDER_PATH);
 const dataDir = getAbsolutePath(GALLERY_FOLDER_PATH);
@@ -25,7 +24,7 @@ const createRequiredDirectories = function () {
   createDataDirectory();
 };
 const createPrivateDirectory = function () {
-  checkAndCreateDirectory("./private");
+  checkAndCreateDirectory('./private');
 };
 const createImagesDirectory = function () {
   checkAndCreateDirectory(imageDir);
@@ -41,7 +40,6 @@ const readGalleryFileContent = function () {
 const writeGalleryFileContent = function (content) {
   writeFileContent(galleryJsonFile, content);
 };
-
 
 // export functions
 module.exports = {
